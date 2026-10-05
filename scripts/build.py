@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Dependency-free static build. Run from any directory; see README for publishing."""
 from pathlib import Path
 from html import escape
@@ -47,32 +48,40 @@ def img(name, alt, priority=False, cls=''):
     large=link('assets/images/'+name+'.webp')
     small=link('assets/images/'+name+'-640.webp')
     sources=f'{small} {dims["smallWidth"]}w, {large} {dims["width"]}w' if dims['smallWidth']!=dims['width'] else f'{large} {dims["width"]}w'
-    return f'<img src="{large}" srcset="{sources}" sizes="(max-width: 650px) calc(100vw - 36px), (max-width: 900px) 50vw, 640px" alt="{e(alt)}" width="{dims["width"]}" height="{dims["height"]}" class="{cls}" {"fetchpriority=\"high\" loading=\"eager\"" if priority else "loading=\"lazy\""} decoding="async">'
+    loading_attr = 'fetchpriority="high" loading="eager"' if priority else 'loading="lazy"'
+    return f'<img src="{large}" srcset="{sources}" sizes="(max-width: 650px) calc(100vw - 36px), (max-width: 900px) 50vw, 640px" alt="{e(alt)}" width="{dims["width"]}" height="{dims["height"]}" class="{cls}" {loading_attr} decoding="async">'
 
 def btn(label, target, style='', symbol='arrow', service=None, context=''):
     attrs = f' data-book="{e(service)}" data-context="{e(context)}"' if service else ''
-    return f'<a class="btn {style}" href="{e(link(target))}"{attrs}>{label}{icon(symbol) if symbol else ""}</a>'
+    icon_html = icon(symbol) if symbol else ''
+    return f'<a class="btn {style}" href="{e(link(target))}"{attrs}>{label}{icon_html}</a>'
 
 def book(label='Выбрать дату', service='enduro', style='', context=''):
     return btn(label,'contacts/#contact',style,'arrow',service,context)
 
 def brand():
-    return f'<a class="brand" href="{link()}" aria-label="3030 — главная"><span class="brand-mark">3030<span class="brand-dot">.</span></span><span class="brand-text">Техника для жизни<br>Минск и область</span></a>'
+    return f'<a class="brand" href="{link()}" aria-label="3030 — главная"><span class="brand-mark">3030<span class="brand-dot">.</span></span></a>'
 
 def header(service):
-    nav=[('enduro/','Эндуро','enduro'),('evacuator/','Эвакуатор','evacuator'),('limuzin/','Лимузины','limuzin'),('arenda-moto/','Мотоциклы','moto'),('contacts/','Контакты','contacts')]
-    items=''.join(f'<a href="{link(p)}"{ " aria-current=\"page\"" if service==s else ""}>{t}</a>' for p,t,s in nav)
+    nav=[
+        ('enduro/', 'Эндуро', 'enduro', 'bike'),
+        ('evacuator/', 'Эвакуатор', 'evacuator', 'truck'),
+        ('limuzin/', 'Лимузины', 'limuzin', 'car'),
+        ('arenda-moto/', 'Мотоциклы', 'moto', 'bike'),
+        ('contacts/', 'Контакты', 'contacts', 'pin')
+    ]
+    items=''.join(f'<a href="{link(p)}"' + (' aria-current="page"' if service==s else '') + f'>{icon(ic)}<span>{t}</span></a>' for p,t,s,ic in nav)
+    selected = service if service in ['enduro','evacuator','limuzin','moto'] else 'enduro'
     return f'''<a class="skip-link" href="#main">Перейти к содержанию</a>
-    <div class="topline"><div class="container"><span>МИНСК И МИНСКАЯ ОБЛАСТЬ · СВОЯ ТЕХНИКА</span><span class="topline-extra">Прокат 09:00–20:00 <span aria-hidden="true">&nbsp; / &nbsp;</span> Эвакуатор 24/7</span></div></div>
-    <header class="header"><div class="container header-inner">{brand()}<nav class="nav" id="navigation" aria-label="Основная навигация">{items}</nav><div class="header-contact"><a class="header-phone" href="tel:{C['phone']}">{PHONE}</a><span>Позвоните — поможем выбрать</span></div><button class="menu-toggle js-only" aria-label="Открыть меню" aria-expanded="false" aria-controls="navigation">{icon('menu')}</button></div></header>'''
+    <header class="header"><div class="header-inner">{brand()}<nav class="nav" id="navigation" aria-label="Основная навигация">{items}</nav><div class="header-contact"><a class="header-phone" href="tel:{C['phone']}" aria-label="Позвонить: {PHONE}"><span class="live-indicator"><span class="live-ping"></span><span class="live-dot"></span></span><span>{PHONE}</span></a><button type="button" class="header-order-btn js-only" data-book="{selected}" data-context="Шапка сайта">Заказать</button><button class="menu-toggle js-only" aria-label="Открыть меню" aria-expanded="false" aria-controls="navigation">{icon('menu')}</button></div></div></header>'''
 
 def footer(service):
     selected=service if service in ['enduro','evacuator','limuzin','moto'] else 'enduro'
-    return f'''<footer class="footer"><div class="container"><div class="footer-grid"><div>{brand()}<p>Ближе к природе. В центре событий.<br>Рядом, когда нужна помощь.</p></div><div><div class="footer-title">Выберите направление</div><ul><li><a href="{link('enduro/')}">Прокат эндуро</a></li><li><a href="{link('evacuator/')}">Эвакуатор 24/7</a></li><li><a href="{link('limuzin/')}">Аренда лимузина</a></li><li><a href="{link('arenda-moto/')}">Дорожные мотоциклы</a></li></ul></div><div><div class="footer-title">Полезно знать</div><ul><li><a href="{link('enduro/s-instruktorom/')}">Эндуро для начинающих</a></li><li><a href="{link('enduro/na-den/')}">Аренда эндуро на день</a></li><li><a href="{link('evacuator/manipulyator/')}">Эвакуатор-манипулятор</a></li><li><a href="{link('contacts/')}">Контакты и реквизиты</a></li></ul></div><div><div class="footer-title">На связи</div><ul><li><a href="tel:{C['phone']}"><strong>{PHONE}</strong></a></li><li><a href="mailto:{C['email']}">{C['email']}</a></li><li><a href="{C['telegram']}" target="_blank" rel="noopener noreferrer" data-messenger="telegram">Telegram ↗</a> &nbsp; <a href="https://wa.me/375296701633" target="_blank" rel="noopener noreferrer" data-messenger="whatsapp">WhatsApp ↗</a></li></ul><p style="margin-top:16px">Прокат: ежедневно 09:00–20:00<br>Эвакуация: круглосуточно</p></div></div><div class="footer-bottom"><span>© 2026 3030. {C['legal_name']}. УНП {C['tax_id']}.</span><a href="{link('privacy/')}">Обработка данных</a><a href="{link('sitemap.xml')}">Карта сайта</a></div></div></footer>
+    return f'''<footer class="footer"><div class="container"><div class="footer-grid"><div>{brand()}<p style="margin-top:14px">Ближе к природе. В центре событий.<br>Рядом, когда нужна помощь.</p></div><div><div class="footer-title">Направления</div><ul><li><a href="{link('enduro/')}">Прокат эндуро</a></li><li><a href="{link('evacuator/')}">Эвакуатор 24/7</a></li><li><a href="{link('limuzin/')}">Аренда лимузина</a></li><li><a href="{link('arenda-moto/')}">Дорожные мотоциклы</a></li></ul></div><div><div class="footer-title">Форматы и инфо</div><ul><li><a href="{link('enduro/s-instruktorom/')}">Эндуро с инструктором</a></li><li><a href="{link('enduro/na-den/')}">Аренда эндуро на день</a></li><li><a href="{link('evacuator/manipulyator/')}">Эвакуатор с манипулятором</a></li><li><a href="{link('contacts/')}">Контакты и адреса</a></li></ul></div><div><div class="footer-title">Прямая связь</div><ul><li><a href="tel:{C['phone']}"><strong>{PHONE}</strong></a></li><li><a href="mailto:{C['email']}">{C['email']}</a></li><li><a href="{C['telegram']}" target="_blank" rel="noopener noreferrer" data-messenger="telegram">Telegram ↗</a> &nbsp; <a href="https://wa.me/375296701633" target="_blank" rel="noopener noreferrer" data-messenger="whatsapp">WhatsApp ↗</a></li></ul><p style="margin-top:16px">Прокат: ежедневно 09:00–20:00<br>Эвакуация: круглосуточно 24/7</p></div></div><div class="footer-bottom"><span>© 2026 3030. {C['legal_name']}. УНП {C['tax_id']}.</span><div><a href="{link('privacy/')}">Обработка данных</a><a href="{link('sitemap.xml')}">Карта сайта</a></div></div></div></footer>
     <div class="mobile-bar" aria-label="Быстрая связь">{btn('Позвонить','tel:'+C['phone'],'secondary','phone')}{book('Обсудить заказ',selected)}</div>'''
 
 def dialogs():
-    choices=''.join(f'<label><input type="radio" name="service" value="{s}" {"checked" if s=="enduro" else ""}><span>{label}</span></label>' for s,label in [('enduro','Эндуро'),('evacuator','Эвакуатор'),('limuzin','Лимузин'),('moto','Мотоцикл')])
+    choices=''.join(f'<label><input type="radio" name="service" value="{s}"' + (' checked' if s=="enduro" else '') + f'><span>{label}</span></label>' for s,label in [('enduro','Эндуро'),('evacuator','Эвакуатор'),('limuzin','Лимузин'),('moto','Мотоцикл')])
     return f'''<dialog id="booking-dialog" class="dialog" aria-labelledby="booking-title"><button class="dialog-close" aria-label="Закрыть" data-close>{icon('close')}</button><p class="eyebrow">Напрямую владельцу</p><h2 id="booking-title">Давайте договоримся о поездке</h2><p class="dialog-intro">Выберите услугу и напишите нам. Уточним свободное время, детали и стоимость.</p><form id="booking-form"><fieldset class="form-services"><legend>Что вас интересует?</legend>{choices}</fieldset><p id="booking-context" class="small" hidden></p><div class="form-row"><div class="field"><label for="booking-name">Как к вам обращаться</label><input id="booking-name" name="name" autocomplete="given-name" maxlength="60" placeholder="Ваше имя"></div><div class="field"><label for="booking-date">Желаемая дата</label><input id="booking-date" type="date" name="date"></div></div><div class="field"><label for="booking-comment">Пожелания <span class="muted">(необязательно)</span></label><textarea id="booking-comment" name="comment" maxlength="1200" placeholder="Например: едем вдвоём, опыта пока нет"></textarea></div><p class="form-error" id="booking-error" role="alert" hidden></p><div class="form-submit"><button type="submit" name="channel" value="whatsapp" class="btn">В WhatsApp {icon('up')}</button><button type="submit" name="channel" value="telegram" class="btn secondary">В Telegram {icon('up')}</button></div><p class="form-help">Откроется чат с готовым текстом. Нажмите «Отправить» в мессенджере, чтобы мы получили запрос. Это обращение, а не подтверждённая бронь. <a href="{link('privacy/')}">Обработка данных</a>.</p><p id="booking-handoff" role="status" class="form-help" hidden></p><a id="booking-fallback" class="link small" target="_blank" rel="noopener noreferrer" hidden>Открыть чат вручную {icon('up')}</a></form><p class="form-help">Нужна помощь сейчас? <a href="tel:{C['phone']}">{PHONE}</a></p></dialog><dialog id="lightbox" class="dialog lightbox" aria-label="Просмотр фотографии"><button class="dialog-close" aria-label="Закрыть фотографию" data-close>{icon('close')}</button><img id="lightbox-img" alt="" width="1200" height="900"><p id="lightbox-caption"></p></dialog>'''
 
 def crumbs(items):
@@ -99,7 +108,10 @@ def related(exclude=''):
     return f'<section class="section-sm"><div class="container"><p class="eyebrow">Другие направления 3030</p><div class="related-grid">{cards}</div></div></section>'
 
 def page_hero(heading, intro, photo, alt, service, tag, chips, ticket, ticket_text, button='Выбрать дату', secondary='#prices', secondary_label='Смотреть цены', photo_pos=''):
-    return f'''<section class="page-hero"><div class="container"><div class="hero-grid"><div class="hero-copy"><p class="eyebrow">{tag}</p><h1>{heading}</h1><p class="lead">{intro}</p><div class="hero-chips">{''.join(f'<span>{x}</span>' for x in chips)}</div><div class="actions">{book(button,service)}{btn(secondary_label,secondary,'secondary',None)}</div></div><div class="hero-photo" {f'style="{photo_pos}"' if photo_pos else ''}>{img(photo,alt,True)}<div class="photo-top"><span class="pill">{icon('pin')} Минск и область</span></div><div class="hero-ticket"><div><small>{ticket_text}</small><strong>{ticket}</strong></div><a class="circle-link" href="#prices" aria-label="Перейти к ценам">{icon('arrow')}</a></div></div></div></div></section>'''
+    style_attr = f'style="{photo_pos}"' if photo_pos else ''
+    chips_html = ''.join(f'<span>{x}</span>' for x in chips)
+    sec_html = btn(secondary_label,secondary,'secondary',None) if secondary and secondary_label else ''
+    return f'''<section class="page-hero"><div class="container"><div class="hero-grid"><div class="hero-copy"><p class="eyebrow">{tag}</p><h1>{heading}</h1><p class="lead">{intro}</p><div class="hero-chips">{chips_html}</div><div class="actions">{book(button,service,context=heading)}{sec_html}</div></div><div class="hero-photo" {style_attr}>{img(photo,alt,True)}<div class="photo-top"><span class="pill">{icon('pin')} Минск и область</span></div><div class="hero-ticket"><div><small>{ticket_text}</small><strong>{ticket}</strong></div><a class="circle-link" href="#prices" aria-label="Перейти к ценам">{icon('arrow')}</a></div></div></div></div></section>'''
 
 def quick(items):
     return '<div class="container"><nav aria-label="Разделы страницы"><ul class="quick-nav">'+''.join(f'<li><a href="#{anchor}">{title}</a></li>' for anchor,title in items)+'</ul></nav></div>'
@@ -138,13 +150,401 @@ def enduro_rates():
     return f'''<section class="section white" id="prices"><div class="container prices-layout"><div><p class="eyebrow">Прокат эндуро в Минске</p><h2>Сначала формат.<br>Потом — приключение.</h2><p class="lead">Первый раз или уже уверенно в седле? Выбирайте поездку под свой опыт.</p><div class="segmented js-only" role="group" aria-label="Тарифы по дням недели"><button type="button" data-period="weekday" aria-pressed="true">Будни</button><button type="button" data-period="weekend" aria-pressed="false">Выходные</button></div><p class="small muted" id="rate-period" aria-live="polite">Тарифы на понедельник — пятницу</p><p class="price-note">Экипировка и полный бак включены.<br>Доставка при аренде на 12 часов: 50 BYN в радиусе 10 км от Минска.<br>Прицеп: 40 BYN в будни / 50 BYN в выходные.</p></div><div class="rate-cards"><article class="rate-card featured"><p class="eyebrow">Начать с удовольствием</p><h3>С инструктором</h3><p>2 часа · для знакомства с эндуро</p><div class="price"><span data-weekday="150" data-weekend="180">150</span> <small>BYN</small></div><p>Будни — 150 / выходные — 180 BYN</p><ul><li>Сопровождение инструктора</li><li>Подбор техники по росту и опыту</li><li>Комплект защиты и инструктаж</li></ul>{book('Хочу попробовать','enduro',context='2 часа с инструктором')}<a class="link small" style="margin-top:18px" href="{link('enduro/s-instruktorom/')}">Как проходит первая поездка {icon('up')}</a></article><article class="rate-card"><p class="eyebrow">Для опытных райдеров</p><h3>На целый день</h3><p>12 часов · без инструктора</p><div class="price"><span data-weekday="180" data-weekend="200">180</span> <small>BYN</small></div><p>Будни — 180 / выходные — 200 BYN</p><ul><li>При наличии опыта вождения</li><li>Экипировка и полный бак</li><li>Можно заказать доставку</li></ul>{book('Арендовать на день','enduro','secondary','12 часов без инструктора')}<a class="link small" style="margin-top:18px" href="{link('enduro/na-den/')}">Все условия аренды {icon('up')}</a></article></div></div></section>'''
 
 def home():
-    cards=[('enduro/','enduro-7','Эндуро на лесном маршруте в Минском районе','01 / НАВСТРЕЧУ ПРИРОДЕ','Прокат эндуро','Лесные маршруты, своя техника и инструктор рядом. Можно без опыта.','от 150 BYN / 2 часа'),('evacuator/','home-8','Эвакуатор с манипулятором перевозит автомобиль','02 / ПОМОЩЬ В ПУТИ','Эвакуатор 24/7','Перевезём автомобиль, мотоцикл или спецтехнику. Минск и область.','от 120 BYN'),('limuzin/','limuzin-14','Белый лимузин Chrysler 300C в Минске','03 / ОСОБЕННЫЙ ПОВОД','Аренда лимузина','Для свадьбы, дня рождения и вечера, который захочется запомнить.','от 150 BYN / час*')]
-    return f'''<section class="hero"><div class="container hero-grid"><div class="hero-copy"><p class="eyebrow">Эндуро · Эвакуатор · Лимузины</p><h1>Ваш маршрут.<br>Ваши <em>эмоции.</em></h1><p class="lead">Выбирайтесь из города на эндуро. Отмечайте важное в лимузине. А если в пути нужна помощь — мы рядом.</p><div class="actions">{btn('Хочу на эндуро','enduro/')}{btn('Выбрать услугу','#services','secondary',None)}</div><div class="hero-proof"><span class="proof-icon">{icon('shield')}</span><div><strong>Своя техника. Живое общение.</strong><br>Работаем напрямую в Минске и области</div></div></div><div class="hero-photo">{img('enduro-6','Эндуро Regulmoto на лесном маршруте в Минском районе',True)}<div class="photo-top"><span class="pill">{icon('pin')} Лусково · Минский район</span><span class="pill">Можно без опыта</span></div><div class="hero-ticket"><div><small>Планы на ближайшие выходные</small><strong>2 часа. Лес. Полная перезагрузка.</strong></div><a class="circle-link" href="{link('enduro/')}" aria-label="Подробнее о прокате эндуро">{icon('up')}</a></div></div></div></section>
-    <div class="container"><nav class="service-strip" aria-label="Быстрый выбор услуги"><a href="{link('enduro/')}"><span class="strip-icon">{icon('bike')}</span><span class="strip-text"><strong>За новыми ощущениями</strong><small>Эндуро с инструктором · от 150 BYN</small></span>{icon('up')}</a><a href="{link('evacuator/')}"><span class="strip-icon">{icon('truck')}</span><span class="strip-text"><strong>Нужна помощь на дороге</strong><small>Эвакуатор · круглосуточно</small></span>{icon('up')}</a><a href="{link('limuzin/')}"><span class="strip-icon">{icon('car')}</span><span class="strip-text"><strong>Планирую особенный день</strong><small>Лимузины · с водителем</small></span>{icon('up')}</a></nav></div>
-    <section class="section" id="services"><div class="container"><div class="section-head"><div><p class="eyebrow">Три повода выбрать 3030</p><h2>Что у вас в планах?</h2></div><p>У каждого маршрута — своя история.<br>У нас — техника для вашей.</p></div><div class="cards">{''.join(f'<a class="service-card" href="{link(p)}"><div class="card-image">{img(photo,alt)}<span class="pill">{tag}</span></div><div class="card-body"><h3>{title}</h3><p>{text}</p><div class="card-foot"><strong>{price}</strong>{icon("up")}</div></div></a>' for p,photo,alt,tag,title,text,price in cards)}</div><p class="section-label">Больше нравится асфальт? <a class="link" href="{link('arenda-moto/')}">Есть и дорожные мотоциклы {icon('arrow')}</a></p><p class="price-note">* Chrysler 300C — 150 BYN/ч при аренде от 2 часов. Один час — 180 BYN.</p></div></section>
-    <section class="section white"><div class="container split"><div class="split-photo">{img('enduro-7','Поездка на эндуро с инструктором по лесной тропе')}<div class="floating-note"><strong>Можно с нуля.</strong><span>Начнём с инструктажа.<br>Дальше — в вашем темпе.</span></div></div><div class="split-copy"><p class="eyebrow">Наш любимый способ отдохнуть</p><h2>Меньше города.<br>Больше настоящего.</h2><p class="lead">Шум леса, новые маршруты и приятная усталость. Чтобы попробовать эндуро, не нужно покупать мотоцикл или быть гонщиком.</p>{feature_list([('Всё необходимое уже здесь','Мотоцикл, полный бак и комплект экипировки включены.'),('Инструктор рядом','Поможет освоиться и подберёт маршрут по вашему уровню.'),('Недалеко от Минска','Стартуем из деревни Лусково. Выберите день — остальное обсудим.')])}{btn('Узнать больше об эндуро','enduro/')}</div></div></section>
-    {steps([('Выберите, что хочется','Лесная поездка, красивый праздник или помощь с перевозкой.'),('Свяжитесь с нами','Уточним детали, свободное время и полную стоимость.'),('Встречаемся и начинаем','Согласуем точку встречи или подачу техники по адресу.')])}
-    {cta()}{related('enduro')}'''
+    cards=[
+        ('enduro/','enduro-7','Эндуро на лесном маршруте в Минском районе','01 / НАВСТРЕЧУ ПРИРОДЕ','Прокат эндуро','Лесные маршруты, своя техника и инструктор рядом. Можно без опыта.','от 150 BYN / 2 часа'),
+        ('evacuator/','home-8','Эвакуатор с манипулятором перевозит автомобиль','02 / ПОМОЩЬ В ПУТИ','Эвакуатор 24/7','Перевезём автомобиль, мотоцикл или спецтехнику. Минск и область.','от 120 BYN'),
+        ('limuzin/','limuzin-14','Белый лимузин Chrysler 300C в Минске','03 / ОСОБЕННЫЙ ПОВОД','Аренда лимузина','Для свадьбы, дня рождения и вечера, который захочется запомнить.','от 150 BYN / час*')
+    ]
+    cards_html=''.join(f'<a class="service-card" href="{link(p)}"><div class="card-image">{img(photo,alt)}<span class="pill">{tag}</span></div><div class="card-body"><h3>{title}</h3><p>{text}</p><div class="card-foot"><strong>{price}</strong>{icon("up")}</div></div></a>' for p,photo,alt,tag,title,text,price in cards)
+    return f'''<div class="page-shell">
+      <div class="outer-envelope">
+        <section class="hero-norma">
+          <div class="hero-backdrop">{img('enduro-6','Эндуро Regulmoto на лесном маршруте в Минском районе',True)}<div class="hero-gradient"></div></div>
+          <div class="container hero-content">
+            <div class="hero-badge-pill"><span class="live-dot"></span> Минск и Минская область · Своя техника 2025 года</div>
+            <div class="hero-grid">
+              <div class="hero-title-wrap">
+                <h1 class="hero-h1"><span class="text-fade">Ваш маршрут.</span><br><span class="text-bright">Ваши <em>эмоции.</em></span></h1>
+              </div>
+              <div class="hero-desc-wrap">
+                <p class="hero-lead">Выбирайтесь из города на <strong>эндуро</strong>. Отмечайте важное в <strong>лимузине</strong>. А если в пути нужна помощь — <strong>мы рядом круглосуточно</strong>.</p>
+                <div class="hero-actions">{btn('Хочу на эндуро','enduro/','white')}{btn('Выбрать услугу','#services','ghost',None)}</div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-footer container">
+            <div class="hero-status-pill"><span class="live-indicator"><span class="live-ping"></span><span class="live-dot"></span></span> База в Лусково открыта 09:00–20:00 · Эвакуатор круглосуточно 24/7</div>
+          </div>
+        </section>
+        <div class="trust-layer">
+          <div class="trust-card">
+            <h2 class="trust-title">Настоящая техника для ярких впечатлений без посредников и наценок</h2>
+            <div class="trust-badges">
+              <span class="trust-badge-item">{icon('bike')} Regulmoto & Progasi 2025</span>
+              <span class="trust-badge-item">{icon('pin')} База в Лусково (15 мин от МКАД)</span>
+              <span class="trust-badge-item">{icon('truck')} Эвакуатор и манипулятор до 5т</span>
+              <span class="trust-badge-item">{icon('car')} Chrysler 300C, Hummer H2, Escalade</span>
+              <span class="trust-badge-item">{icon('shield')} Полная экипировка и топливо включены</span>
+            </div>
+            <div class="cursor-tooltip" aria-hidden="true">3030 · Собственный парк техники</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="section" id="services">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Три ключевых направления</p>
+            <h2>Что у вас в планах?</h2>
+          </div>
+          <p>У каждого маршрута — своя история.<br>У нас — техника для вашей.</p>
+        </div>
+        <div class="cards">{cards_html}</div>
+        <p class="section-label">Больше нравится асфальт? <a class="link" href="{link('arenda-moto/')}">Есть и дорожные мотоциклы {icon('arrow')}</a></p>
+        <p class="price-note">* Chrysler 300C — 150 BYN/ч при аренде от 2 часов. Один час — 180 BYN.</p>
+      </div>
+    </section>
+    <section class="section white">
+      <div class="container">
+        <div class="bento-split">
+          <div class="bento-card-left">
+            <div>
+              <p class="eyebrow">Наш любимый способ отдохнуть</p>
+              <h2>Меньше города.<br>Больше настоящего.</h2>
+              <p class="lead">Шум леса, новые маршруты и приятная усталость. Чтобы попробовать эндуро, не нужно покупать мотоцикл или быть гонщиком.</p>
+              {feature_list([
+                ('Всё необходимое уже здесь','Мотоцикл, полный бак и комплект экипировки включены.'),
+                ('Инструктор рядом','Поможет освоиться и подберёт маршрут по вашему уровню.'),
+                ('Недалеко от Минска','Стартуем из деревни Лусково. Выберите день — остальное обсудим.')
+              ])}
+            </div>
+            <div style="margin-top:24px">
+              {btn('Узнать больше об эндуро','enduro/')}
+            </div>
+          </div>
+          <div class="bento-card-carousel">
+            <div class="carousel-slide active">{img('enduro-7','Поездка на эндуро с инструктором по лесной тропе')}</div>
+            <div class="carousel-slide">{img('enduro-5','Эндуро Regulmoto на маршруте')}</div>
+            <div class="carousel-slide">{img('enduro-8','Два эндуро на лесной трассе')}</div>
+            <div class="carousel-slide">{img('enduro-10','Эндуро во время загородной остановки')}</div>
+            <div class="carousel-slide">{img('enduro-12','Прокат эндуро в Лусково')}</div>
+            <div class="carousel-controls">
+              <div class="carousel-pill-bar">
+                <button type="button" class="carousel-dot active" data-index="0" aria-label="Слайд 1"></button>
+                <button type="button" class="carousel-dot" data-index="1" aria-label="Слайд 2"></button>
+                <button type="button" class="carousel-dot" data-index="2" aria-label="Слайд 3"></button>
+                <button type="button" class="carousel-dot" data-index="3" aria-label="Слайд 4"></button>
+                <button type="button" class="carousel-dot" data-index="4" aria-label="Слайд 5"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Без лишних сложностей</p>
+            <h2>Всё начинается с простого шага</h2>
+          </div>
+          <p>Прозрачный процесс от первого сообщения до момента передачи ключей.</p>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-card-head">
+              <span class="step-index-badge">01</span>
+              <h3>Выберите, что хочется</h3>
+              <p>Лесная поездка, красивый праздник или помощь с перевозкой.</p>
+            </div>
+            <div class="step-card-img">{img('enduro-1','Выбор эндуро')}</div>
+          </div>
+          <div class="step-card">
+            <div class="step-card-head">
+              <span class="step-index-badge">02</span>
+              <h3>Свяжитесь с нами</h3>
+              <p>Уточним детали, свободное время и полную стоимость без скрытых платежей.</p>
+            </div>
+            <div class="step-card-img">{img('limuzin-3','Согласование поездки на лимузине')}</div>
+          </div>
+          <div class="step-card">
+            <div class="step-card-head">
+              <span class="step-index-badge">03</span>
+              <h3>Встречаемся и начинаем</h3>
+              <p>Согласуем точку встречи в Лусково или подачу техники по вашему адресу.</p>
+            </div>
+            <div class="step-card-img">{img('home-8','Подача техники')}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="features-envelope">
+          <p class="eyebrow">Инфраструктура и сервис</p>
+          <div class="section-head" style="margin-bottom:20px">
+            <div>
+              <h2>Всё продумано до мелочей</h2>
+            </div>
+            <p>Готовые маршруты, сертифицированная экипировка и собственный парк техники.</p>
+          </div>
+          <div class="feature-tabs-wrap">
+            <button type="button" class="feature-tab-btn active"
+              data-title="Эндуро-база в Лусково"
+              data-desc="Оборудованная база всего в 15 минутах от МКАД. Раздевалки, чай, инструктаж и прямой выезд на живописные лесные маршруты любой сложности."
+              data-badge-title="Лусково · Минский р-н"
+              data-badge-sub="Ежедневно 09:00–20:00"
+              data-img="{link('assets/images/enduro-7-640.webp')}">
+              {icon('bike')} <span>Эндуро-база</span>
+            </button>
+            <button type="button" class="feature-tab-btn"
+              data-title="Полный комплект экипировки"
+              data-desc="Каждому райдеру выдаём шлем, панцирь-черепаху, перчатки, мотоштаны, наколенники и мотоботы. Размеры от XS до XXL, обработка после каждой поездки."
+              data-badge-title="Сертифицированная защита"
+              data-badge-sub="Включено в стоимость"
+              data-img="{link('assets/images/enduro-8-640.webp')}">
+              {icon('shield')} <span>Экипировка</span>
+            </button>
+            <button type="button" class="feature-tab-btn"
+              data-title="Эвакуация любой сложности 24/7"
+              data-desc="Круглосуточный выезд по Минску и всей Беларуси. Лебёдка, манипулятор и подкатные тележки для автомобилей с заблокированными колёсами."
+              data-badge-title="Подача от 25 минут"
+              data-badge-sub="Круглосуточно 24/7"
+              data-img="{link('assets/images/home-8-640.webp')}">
+              {icon('truck')} <span>Эвакуация 24/7</span>
+            </button>
+            <button type="button" class="feature-tab-btn"
+              data-title="Лимузины с вежливыми водителями"
+              data-desc="Белоснежные Chrysler 300C, Hummer H2 и Cadillac Escalade. Премиальный звук, неоновая подсветка салона, бар и подача точно в срок."
+              data-badge-title="Праздник в движении"
+              data-badge-sub="До 25 персон"
+              data-img="{link('assets/images/limuzin-14-640.webp')}">
+              {icon('car')} <span>Лимузины</span>
+            </button>
+          </div>
+          <div class="feature-display-grid">
+            <div class="feature-info">
+              <h3 id="feature-active-title">Эндуро-база в Лусково</h3>
+              <p id="feature-active-desc">Оборудованная база всего в 15 минутах от МКАД. Раздевалки, чай, инструктаж и прямой выезд на живописные лесные маршруты любой сложности.</p>
+              <div style="margin-top:24px">
+                {book('Запланировать визит','enduro')}
+              </div>
+            </div>
+            <div class="mockup-frame">
+              <img id="feature-active-img" src="{link('assets/images/enduro-7-640.webp')}" alt="Эндуро-база в Лусково" width="640" height="427" loading="lazy">
+              <div class="mockup-badge">
+                <strong id="feature-active-badge-title">Лусково · Минский р-н</strong>
+                <span id="feature-active-badge-sub">Ежедневно 09:00–20:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="stats-envelope">
+          <div class="stats-grid">
+            <div>
+              <p class="eyebrow" style="color:rgba(255,255,255,0.6)">Надёжность в цифрах</p>
+              <h2>Свой автопарк.<br>Честные условия.</h2>
+              <p class="lead">Мы не перепродаём чужие заявки. Вся техника находится в нашей собственности, обслуживается по регламенту и готова к выезду.</p>
+              <div class="actions">
+                {btn('Забронировать технику','contacts/#contact','white')}
+                {btn('Позвонить','tel:'+C['phone'],'ghost','phone')}
+              </div>
+            </div>
+            <div class="stat-cards-2x2">
+              <div class="stat-card">
+                <span class="stat-num nums">100%</span>
+                <span class="stat-label">Собственный парк</span>
+                <span class="stat-sub">Без переплат посредникам</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-num nums">24/7</span>
+                <span class="stat-label">Эвакуация авто</span>
+                <span class="stat-sub">Выезд по Минску и области</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-num nums">2025</span>
+                <span class="stat-label">Свежая техника</span>
+                <span class="stat-sub">Regulmoto & Progasi</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-num nums">0 BYN</span>
+                <span class="stat-label">Экипировка в тарифе</span>
+                <span class="stat-sub">Шлем, защита, бензин</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section white">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Почему выбирают 3030</p>
+            <h2>Сравните подход к сервису</h2>
+          </div>
+          <p>Прямой контакт с владельцем техники против безликих агрегаторов и случайных объявлений.</p>
+        </div>
+        <div class="comparison-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th scope="col">Критерий</th>
+                <th scope="col" class="col-brand">3030 (Напрямую)</th>
+                <th scope="col">Агрегаторы и диспетчеры</th>
+                <th scope="col">Случайные объявления</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Собственный автопарк</th>
+                <td class="col-brand"><span class="check-icon">{icon('check')}</span> Да, свои машины и мото</td>
+                <td><span class="cross-icon">✕</span> Перепродажа чужих заявок</td>
+                <td><span class="cross-icon">✕</span> Неизвестное состояние</td>
+              </tr>
+              <tr>
+                <th scope="row">Экипировка и бензин</th>
+                <td class="col-brand"><span class="check-icon">{icon('check')}</span> Полный комплект включён</td>
+                <td><span class="cross-icon">✕</span> Доплата на месте</td>
+                <td><span class="cross-icon">✕</span> Доплата или без защиты</td>
+              </tr>
+              <tr>
+                <th scope="row">Цена согласована до выезда</th>
+                <td class="col-brand"><span class="check-icon">{icon('check')}</span> Фиксированная сумма</td>
+                <td><span class="cross-icon">✕</span> Комиссия и сюрпризы</td>
+                <td><span class="cross-icon">✕</span> Торг по факту</td>
+              </tr>
+              <tr>
+                <th scope="row">Официальные документы</th>
+                <td class="col-brand"><span class="check-icon">{icon('check')}</span> Договор, чеки, страховая</td>
+                <td><span class="cross-icon">✕</span> Часто без чеков</td>
+                <td><span class="cross-icon">✕</span> Перевод на карту</td>
+              </tr>
+              <tr>
+                <th scope="row">Сопровождение инструктора</th>
+                <td class="col-brand"><span class="check-icon">{icon('check')}</span> Внимательно и в вашем темпе</td>
+                <td><span class="cross-icon">✕</span> Как повезёт с исполнителем</td>
+                <td><span class="cross-icon">✕</span> Без обучения</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="reviews">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">5.0 на основе поездок</p>
+            <h2>Что говорят наши гости</h2>
+          </div>
+          <p>Честные отзывы о лесных маршрутах, праздниках в лимузине и эвакуации на дорогах.</p>
+        </div>
+        <div class="reviews-grid">
+          <article class="review-card">
+            <div class="review-stars">
+              {icon('sun')}{icon('sun')}{icon('sun')}{icon('sun')}{icon('sun')}
+            </div>
+            <blockquote>«Брали эндуро в Лусково первый раз в жизни. Инструктор всё объяснил за 15 минут, трасса по лесу просто космос! Экипировка чистая, мотоциклы новенькие. Обязательно вернемся еще!»</blockquote>
+            <div class="review-author">
+              <span>Алексей М. · Прокат эндуро</span>
+              <span class="verified-badge">{icon('check')} Проверено</span>
+            </div>
+          </article>
+          <article class="review-card">
+            <div class="review-stars">
+              {icon('sun')}{icon('sun')}{icon('sun')}{icon('sun')}{icon('sun')}
+            </div>
+            <blockquote>«Застрял ночью на трассе М3 с заблокированным колесом. Манипулятор приехал через 35 минут, погрузили аккуратно, выдали все чеки для страховой компании. Спасибо за оперативность!»</blockquote>
+            <div class="review-author">
+              <span>Дмитрий В. · Эвакуатор 24/7</span>
+              <span class="verified-badge">{icon('check')} Проверено</span>
+            </div>
+          </article>
+          <article class="review-card">
+            <div class="review-stars">
+              {icon('sun')}{icon('sun')}{icon('sun')}{icon('sun')}{icon('sun')}
+            </div>
+            <blockquote>«Заказывали Chrysler 300C на свадьбу. Машина блестела, салон чистый, водитель пунктуальный и предупредительный. Гости остались в полном восторге от поездки по вечернему Минску!»</blockquote>
+            <div class="review-author">
+              <span>Елена и Сергей · Лимузин</span>
+              <span class="verified-badge">{icon('check')} Проверено</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="section white">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Галерея техники</p>
+            <h2>Готовы к любому маршруту</h2>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button type="button" id="carousel-prev" class="nav-arrow-btn" aria-label="Предыдущий слайд" style="transform:rotate(180deg)">{icon('arrow')}</button>
+            <button type="button" id="carousel-next" class="nav-arrow-btn" aria-label="Следующий слайд">{icon('arrow')}</button>
+          </div>
+        </div>
+        <div class="carousel-snap-track">
+          <figure class="snap-card">
+            <div class="snap-img-wrap">
+              {img('enduro-7','Эндуро Regulmoto в лесу')}
+              <div class="snap-tag-center"><span class="snap-badge">REGULMOTO 250 <span class="snap-badge-sub">Эндуро</span></span></div>
+            </div>
+            <figcaption>Лесные маршруты в Лусково с сопровождением инструктора</figcaption>
+          </figure>
+          <figure class="snap-card">
+            <div class="snap-img-wrap">
+              {img('home-8','Эвакуатор с краном-манипулятором')}
+              <div class="snap-tag-center"><span class="snap-badge">MANIPULATOR 5T <span class="snap-badge-sub">24/7</span></span></div>
+            </div>
+            <figcaption>Бережная погрузка при заблокированных колёсах и ДТП</figcaption>
+          </figure>
+          <figure class="snap-card">
+            <div class="snap-img-wrap">
+              {img('limuzin-14','Белый Chrysler 300C')}
+              <div class="snap-tag-center"><span class="snap-badge">CHRYSLER 300C <span class="snap-badge-sub">Лимузин</span></span></div>
+            </div>
+            <figcaption>Праздники, свадьбы и выпускные с водителем в Минске</figcaption>
+          </figure>
+          <figure class="snap-card">
+            <div class="snap-img-wrap">
+              {img('enduro-10','Эндуро Progasi 300')}
+              <div class="snap-tag-center"><span class="snap-badge">PROGASI 300 <span class="snap-badge-sub">12 часов</span></span></div>
+            </div>
+            <figcaption>Аренда на целый день для райдеров с опытом вождения</figcaption>
+          </figure>
+          <figure class="snap-card">
+            <div class="snap-img-wrap">
+              {img('limuzin-5','Лимузин Hummer H2')}
+              <div class="snap-tag-center"><span class="snap-badge">HUMMER H2 <span class="snap-badge-sub">До 25 мест</span></span></div>
+            </div>
+            <figcaption>Вместительный салон, клубный звук и атмосфера вечеринки</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="reveal-banner">
+          <div class="reveal-bg">{img('enduro-12','Эндуро в сосновом лесу')}</div>
+          <div class="reveal-content">
+            <p class="eyebrow" style="color:rgba(255,255,255,0.7);justify-content:center">Готовы отправиться?</p>
+            <h2>Время для настоящих впечатлений.</h2>
+            {book('Выбрать дату поездки','enduro','white',context='Баннер внизу главной страницы')}
+          </div>
+        </div>
+      </div>
+    </section>
+    {faq(ENDURO_FAQ)}
+    {cta()}
+    {related('enduro')}'''
 
 def enduro():
     models=[('enduro-1','REGULMOTO','250 см³','25 л.с.','120 кг'),('enduro-2','REGULMOTO Crosstrec','292 см³','28 л.с.','127 кг'),('enduro-3','PROGASI','300 см³','27 л.с.','117 кг')]
