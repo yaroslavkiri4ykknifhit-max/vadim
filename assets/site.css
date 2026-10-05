@@ -1058,6 +1058,28 @@ svg {
   transition: transform 0.2s var(--ease-norma);
 }
 
+.card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: all 0.2s var(--ease-norma);
+}
+
+.service-card:hover .card-cta {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-paper);
+}
+
 .service-card:hover .card-foot svg {
   transform: translate(2px, -2px);
 }
@@ -1845,6 +1867,11 @@ svg {
   transition: all 0.2s var(--ease-norma);
 }
 
+.nav-arrow-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 .nav-arrow-btn:hover {
   border-color: rgba(10, 10, 10, 0.3);
   background: var(--color-paper-2);
@@ -2288,11 +2315,13 @@ svg {
 .related {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 24px;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 28px;
   border-radius: 22px;
   border: 1px solid var(--color-line);
   background: var(--color-paper);
+  text-decoration: none;
   transition: all 0.25s var(--ease-norma);
 }
 
@@ -2302,28 +2331,53 @@ svg {
   transform: translateY(-2px);
 }
 
-.related svg {
-  width: 28px;
-  height: 28px;
-  color: var(--color-ink);
+.related-info {
+  flex: 1;
+  min-width: 0;
 }
 
+.related-info h3,
 .related h3 {
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin: 0 0 2px;
+  margin: 0 0 3px;
+  color: var(--color-ink);
 }
 
+.related-info p,
 .related p {
   font-size: 0.875rem;
   color: var(--color-ink-2);
   margin: 0;
 }
 
-.related .arrow {
-  margin-left: auto;
-  color: var(--color-ink-3);
+.related-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s var(--ease-norma);
+}
+
+.related:hover .related-cta {
+  background: #242424;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .related {
+    padding: 18px 20px;
+    gap: 14px;
+  }
 }
 
 /* Contacts Layout */
@@ -2551,6 +2605,20 @@ svg {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-top: 20px;
+}
+
+.form-submit .btn {
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .form-submit {
+    grid-template-columns: 1fr;
+  }
 }
 
 .lightbox {
@@ -2865,6 +2933,28 @@ svg {
 .circle-link svg {
   width: 14px;
   height: 14px;
+}
+
+.hero-ticket-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s var(--ease-norma);
+}
+
+.hero-ticket-btn:hover {
+  background: #242424;
+  transform: translateY(-1px);
 }
 
 .quick-nav {
