@@ -1,0 +1,146 @@
+{
+  "enduro-1": {
+    "width": 600,
+    "height": 600,
+    "smallWidth": 600,
+    "smallHeight": 600
+  },
+  "enduro-10": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "enduro-12": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "enduro-2": {
+    "width": 1200,
+    "height": 1200,
+    "smallWidth": 640,
+    "smallHeight": 640
+  },
+  "enduro-3": {
+    "width": 825,
+    "height": 560,
+    "smallWidth": 640,
+    "smallHeight": 434
+  },
+  "enduro-5": {
+    "width": 1280,
+    "height": 960,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "enduro-6": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "enduro-7": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "enduro-8": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "evacuator-17": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "evacuator-18": {
+    "width": 1041,
+    "height": 960,
+    "smallWidth": 640,
+    "smallHeight": 590
+  },
+  "evacuator-19": {
+    "width": 1280,
+    "height": 960,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "evacuator-21": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "evacuator-25": {
+    "width": 1280,
+    "height": 960,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "evacuator-7": {
+    "width": 934,
+    "height": 835,
+    "smallWidth": 640,
+    "smallHeight": 572
+  },
+  "home-8": {
+    "width": 1280,
+    "height": 960,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "limuzin-10": {
+    "width": 1280,
+    "height": 853,
+    "smallWidth": 640,
+    "smallHeight": 427
+  },
+  "limuzin-14": {
+    "width": 1280,
+    "height": 852,
+    "smallWidth": 640,
+    "smallHeight": 426
+  },
+  "limuzin-18": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  },
+  "limuzin-3": {
+    "width": 1265,
+    "height": 728,
+    "smallWidth": 640,
+    "smallHeight": 368
+  },
+  "limuzin-4": {
+    "width": 1280,
+    "height": 914,
+    "smallWidth": 640,
+    "smallHeight": 457
+  },
+  "limuzin-5": {
+    "width": 1280,
+    "height": 720,
+    "smallWidth": 640,
+    "smallHeight": 360
+  },
+  "limuzin-6": {
+    "width": 1280,
+    "height": 853,
+    "smallWidth": 640,
+    "smallHeight": 427
+  },
+  "limuzin-8": {
+    "width": 960,
+    "height": 1280,
+    "smallWidth": 600,
+    "smallHeight": 800
+  }
+}

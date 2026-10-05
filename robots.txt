@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yaroslavkiri4ykknifhit-max.github.io/vadim/sitemap.xml
