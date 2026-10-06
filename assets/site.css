@@ -3676,6 +3676,182 @@ svg {
 .proof-grid strong { font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: -.06em; }
 .proof-grid span { color: rgba(255,255,255,.68); font-size: .82rem; }
 
+/* ==========================================================================
+   Road motorcycle visual catalog
+   ========================================================================== */
+
+.moto-page-intro .lead {
+  max-width: 680px;
+}
+
+.moto-catalog-head {
+  align-items: end;
+}
+
+.moto-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.moto-catalog-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: 26px;
+  background: #fff;
+  transition: transform .25s var(--ease-norma), box-shadow .25s var(--ease-norma), border-color .25s ease;
+}
+
+.moto-catalog-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(10,10,10,.2);
+  box-shadow: 0 20px 48px rgba(10,10,10,.08);
+}
+
+.moto-catalog-photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-line);
+  background: #f6f6f4;
+}
+
+.moto-catalog-photo img {
+  width: 100%;
+  height: 100%;
+  padding: 18px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform .35s var(--ease-norma);
+}
+
+.moto-catalog-card:hover .moto-catalog-photo img {
+  transform: scale(1.035);
+}
+
+.moto-catalog-photo > span {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 7px 10px;
+  border: 1px solid rgba(10,10,10,.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,.84);
+  backdrop-filter: blur(8px);
+  font-size: .68rem;
+  font-weight: 700;
+}
+
+.moto-catalog-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 22px;
+}
+
+.moto-kind {
+  margin-bottom: 7px;
+  color: var(--color-ink-2);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.moto-catalog-body h3 {
+  min-height: 2.55em;
+  font-size: 1.22rem;
+  line-height: 1.28;
+  letter-spacing: -.035em;
+}
+
+.moto-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 20px 0 18px;
+}
+
+.moto-prices > div {
+  padding: 13px 12px;
+  border-radius: 15px;
+  background: var(--color-paper-2);
+}
+
+.moto-prices small,
+.moto-prices strong {
+  display: block;
+}
+
+.moto-prices small {
+  margin-bottom: 4px;
+  color: var(--color-ink-2);
+  font-size: .68rem;
+}
+
+.moto-prices strong {
+  font-size: .92rem;
+  letter-spacing: -.02em;
+}
+
+.moto-catalog-body .btn {
+  width: 100%;
+  margin-top: auto;
+  justify-content: center;
+}
+
+.moto-catalog-note {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 24px 26px;
+  border-radius: 20px;
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
+  font-size: .84rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .moto-catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .moto-catalog-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .moto-catalog-card {
+    border-radius: 22px;
+  }
+
+  .moto-catalog-photo {
+    aspect-ratio: 16 / 11;
+  }
+
+  .moto-catalog-body {
+    padding: 19px;
+  }
+
+  .moto-catalog-body h3 {
+    min-height: 0;
+    font-size: 1.28rem;
+  }
+
+  .moto-catalog-note {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 20px;
+  }
+}
+
 @media (max-width: 900px) {
   .choice-intro { grid-template-columns: 1fr; gap: 22px; }
   .choice-lead { display: flex; justify-content: space-between; align-items: end; gap: 24px; }

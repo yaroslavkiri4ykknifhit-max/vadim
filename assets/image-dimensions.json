@@ -142,5 +142,47 @@
     "height": 1280,
     "smallWidth": 600,
     "smallHeight": 800
+  },
+  "moto-ducati-848": {
+    "width": 800,
+    "height": 800,
+    "smallWidth": 640,
+    "smallHeight": 640
+  },
+  "moto-honda-cbr600f3": {
+    "width": 800,
+    "height": 600,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "moto-honda-cbr600f4": {
+    "width": 800,
+    "height": 541,
+    "smallWidth": 640,
+    "smallHeight": 433
+  },
+  "moto-honda-hornet": {
+    "width": 999,
+    "height": 749,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "moto-kawasaki-zx6r": {
+    "width": 640,
+    "height": 480,
+    "smallWidth": 640,
+    "smallHeight": 480
+  },
+  "moto-suzuki-sv650": {
+    "width": 500,
+    "height": 296,
+    "smallWidth": 500,
+    "smallHeight": 296
+  },
+  "moto-yamaha-r6": {
+    "width": 800,
+    "height": 527,
+    "smallWidth": 640,
+    "smallHeight": 422
   }
 }
