@@ -46,6 +46,11 @@
   --color-line-inverse: rgba(255, 255, 255, 0.18);
   --color-accent: #0a0a0a;
   --color-accent-subtle: #242424;
+  --service-accent: #287a4b;
+  --service-accent-dark: #1e603a;
+  --service-soft: #edf8ef;
+  --service-soft-strong: #dff1e3;
+  --service-line: rgba(40, 122, 75, 0.2);
 
   /* Typography scales */
   --text-h1: clamp(2.25rem, 1.5rem + 3.2vw, 4.25rem);
@@ -92,6 +97,39 @@ body {
   color: var(--color-ink);
   font-feature-settings: "ss01", "cv01", "cv11";
   overflow-x: hidden;
+}
+
+body[data-service="home"],
+body[data-service="enduro"] {
+  --service-accent: #287a4b;
+  --service-accent-dark: #1e603a;
+  --service-soft: #edf8ef;
+  --service-soft-strong: #dff1e3;
+  --service-line: rgba(40, 122, 75, 0.2);
+}
+
+body[data-service="evacuator"] {
+  --service-accent: #2368d8;
+  --service-accent-dark: #174fa9;
+  --service-soft: #edf5ff;
+  --service-soft-strong: #dceaff;
+  --service-line: rgba(35, 104, 216, 0.2);
+}
+
+body[data-service="limuzin"] {
+  --service-accent: #a86708;
+  --service-accent-dark: #805006;
+  --service-soft: #fff6df;
+  --service-soft-strong: #ffe9b4;
+  --service-line: rgba(168, 103, 8, 0.22);
+}
+
+body[data-service="moto"] {
+  --service-accent: #c94732;
+  --service-accent-dark: #9f3525;
+  --service-soft: #fff0eb;
+  --service-soft-strong: #ffdcd2;
+  --service-line: rgba(201, 71, 50, 0.2);
 }
 
 body.modal-open {
@@ -3814,6 +3852,130 @@ svg {
   color: var(--color-ink-2);
   font-size: .84rem;
   line-height: 1.55;
+}
+
+/* ==========================================================================
+   Service color system
+   ========================================================================== */
+
+.header-order-btn,
+.btn {
+  background: var(--service-accent);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--service-accent) 24%, transparent);
+}
+
+.header-order-btn:hover,
+.btn:hover,
+.hero-ticket-btn:hover {
+  background: var(--service-accent-dark);
+}
+
+.btn.secondary {
+  background: #fff;
+  color: var(--service-accent-dark);
+  border-color: var(--service-line);
+  box-shadow: none;
+}
+
+.btn.secondary:hover {
+  background: var(--service-soft);
+  border-color: var(--service-accent);
+}
+
+.eyebrow {
+  color: var(--service-accent-dark);
+}
+
+.eyebrow::before,
+.hero-ticket-btn,
+.circle-link {
+  background: var(--service-accent);
+}
+
+.nav a[aria-current="page"] {
+  color: var(--service-accent-dark);
+  background: var(--service-soft-strong);
+}
+
+.hero-chips span,
+.hero-chip,
+.quick-nav li a,
+.segmented,
+.moto-prices > div {
+  background: var(--service-soft);
+  border-color: var(--service-line);
+}
+
+.quick-nav li a:hover {
+  color: var(--service-accent-dark);
+  background: var(--service-soft-strong);
+  border-color: var(--service-accent);
+}
+
+.feature-list .tick,
+.focus-list svg {
+  color: var(--service-accent-dark);
+  background: var(--service-soft-strong);
+  border-color: var(--service-line);
+}
+
+.rate-card.featured {
+  background: linear-gradient(150deg, var(--service-soft), #fff 74%);
+  border-color: var(--service-line);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--service-accent) 10%, transparent);
+}
+
+.rate-card.featured .price,
+.moto-prices strong,
+.link:hover {
+  color: var(--service-accent-dark);
+}
+
+.section.sage,
+.cta-panel {
+  background: var(--service-soft);
+  border-color: var(--service-line);
+}
+
+.page-hero {
+  background: linear-gradient(180deg, var(--service-soft) 0, rgba(255,255,255,0) 88%);
+}
+
+.choice-hero {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 206, 72, .34), transparent 27%),
+    linear-gradient(135deg, #e9f7e8 0%, #f8fbef 48%, #fff8df 100%);
+}
+
+.choice-phone,
+.choice-note a {
+  color: var(--service-accent-dark);
+}
+
+.proof-grid article:nth-child(1) { background: #287a4b; }
+.proof-grid article:nth-child(2) { background: #2368d8; }
+.proof-grid article:nth-child(3) { background: #a86708; }
+.proof-grid article:nth-child(4) { background: #c94732; }
+
+.moto-catalog-photo > span {
+  color: var(--service-accent-dark);
+  background: rgba(255, 240, 235, .92);
+  border-color: var(--service-line);
+}
+
+.moto-kind {
+  color: var(--service-accent-dark);
+}
+
+.moto-catalog-note {
+  background: var(--service-soft);
+  border: 1px solid var(--service-line);
+}
+
+.info-card:hover,
+.moto-catalog-card:hover {
+  border-color: var(--service-line);
+  box-shadow: 0 20px 48px color-mix(in srgb, var(--service-accent) 10%, transparent);
 }
 
 @media (max-width: 900px) {
